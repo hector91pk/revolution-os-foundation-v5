@@ -12,6 +12,7 @@ import {
   normalizePlannerDateKey,
 } from './selectors';
 import { PlannerModuleView } from './views/PlannerModuleView';
+import { PlannerItemDetailView } from './views/PlannerItemDetailView';
 
 function buildDraft(defaultDate) {
   return {
@@ -45,6 +46,11 @@ export function PlannerModule({ subPath, navigateWithinModule, navigateModule })
   const weekItems = useMemo(() => getItemsForWeek(filteredItems, route.dateKey), [filteredItems, route.dateKey]);
   const monthItems = useMemo(() => getItemsForMonth(filteredItems, route.dateKey), [filteredItems, route.dateKey]);
 
+  const selectedItem = useMemo(
+    () => state.planner.items.find((item) => item.id === route.itemId),
+    [state.planner.items, route.itemId]
+  );
+
   function handleViewChange(nextView) {
     navigateWithinModule(`/${nextView}/${route.dateKey}`);
   }
@@ -77,12 +83,57 @@ export function PlannerModule({ subPath, navigateWithinModule, navigateModule })
       return;
     }
 
-    if (item.linkedEntityType === 'project' && item.linkedEntityId) {
-      navigateModule('control-center', `/project/${encodeURIComponent(item.linkedEntityId)}`);
+    navigateWithinModule(`/item/${encodeURIComponent(item.id)}`);
+  }
+
+  function updateSelectedItemField(field, value) {
+    if (!selectedItem) return;
+    actions.planner.updateItem(selectedItem.id, { [field]: value });
+  }
+
+  function toggleSelectedItem() {
+    if (!selectedItem) return;
+    actions.planner.toggleItemStatus(selectedItem.id);
+  }
+
+  function deleteSelectedItem() {
+    if (!selectedItem) return;
+    const backDate = selectedItem.dueDate || todayKey();
+    actions.planner.deleteItem(selectedItem.id);
+    navigateWithinModule(`/day/${backDate}`);
+  }
+
+  function openLinkedFromSelectedItem() {
+    if (!selectedItem?.linkedEntityType || !selectedItem?.linkedEntityId) return;
+
+    if (selectedItem.linkedEntityType === 'project') {
+      navigateModule('control-center', `/project/${encodeURIComponent(selectedItem.linkedEntityId)}`);
       return;
     }
 
-    navigateWithinModule(`/day/${item.dueDate || route.dateKey || todayKey()}`);
+    if (selectedItem.linkedEntityType === 'lead') {
+      navigateModule('leads-crm', `/lead/${encodeURIComponent(selectedItem.linkedEntityId)}`);
+      return;
+    }
+
+    if (selectedItem.linkedEntityType === 'inbox-item') {
+      navigateModule('inbox', `/item/${encodeURIComponent(selectedItem.linkedEntityId)}`);
+      return;
+    }
+  }
+
+  if (route.view === 'item' && selectedItem) {
+    return (
+      <PlannerItemDetailView
+        item={selectedItem}
+        centers={state.shared.centers}
+        onBack={() => navigateWithinModule(`/day/${selectedItem.dueDate || todayKey()}`)}
+        onFieldChange={updateSelectedItemField}
+        onToggle={toggleSelectedItem}
+        onDelete={deleteSelectedItem}
+        onOpenLinked={openLinkedFromSelectedItem}
+      />
+    );
   }
 
   return (
