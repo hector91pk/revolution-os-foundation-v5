@@ -1,7 +1,13 @@
 import { seedState } from '../../data/seed';
 import { deepClone } from '../../shared/utils/clone';
-import { LEGACY_STORAGE_KEYS, STORAGE_KEY } from './storageKeys';
 import { migrateLoadedState } from './migrations';
+import { mergeRemoteModulesIntoState } from './remoteModules';
+import {
+  getRemoteSyncStateSnapshot,
+  persistRemoteModules,
+  startRemoteSession,
+} from './remoteSession';
+import { LEGACY_STORAGE_KEYS, STORAGE_KEY } from './storageKeys';
 
 function getStoredPayload() {
   if (typeof window === 'undefined') {
@@ -47,19 +53,41 @@ export function loadAppState() {
 }
 
 export function saveAppState(state) {
-  if (typeof window === 'undefined') {
-    return;
+  if (typeof window !== 'undefined') {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error('No se pudo guardar el estado local:', error);
+    }
   }
 
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (error) {
-    console.error('No se pudo guardar el estado:', error);
-  }
+  void persistRemoteModules(state);
 }
 
-export function resetAppState() {
+export function connectAppRepository({ onRemoteState, onStatusChange }) {
+  return startRemoteSession({
+    onRemoteModules: onRemoteState,
+    onStatusChange,
+  });
+}
+
+export function mergeRemoteStateIntoAppState(state, remoteModules) {
+  return mergeRemoteModulesIntoState(state, remoteModules);
+}
+
+export function getRepositorySyncState() {
+  return getRemoteSyncStateSnapshot();
+}
+
+export function resetAppState(currentState = null) {
   const clean = deepClone(seedState);
+
+  if (currentState) {
+    clean.crm = deepClone(currentState.crm ?? clean.crm);
+    clean.planner = deepClone(currentState.planner ?? clean.planner);
+    clean.inbox = deepClone(currentState.inbox ?? clean.inbox);
+  }
+
   saveAppState(clean);
 
   if (typeof window !== 'undefined') {

@@ -8,9 +8,20 @@ function stageTone(stage) {
   return 'info';
 }
 
-export function LeadListItem({ lead, onOpen }) {
+export function LeadListItem({ lead, onOpen, onDelete, canDelete }) {
   return (
-    <button className="list-card lead-list-item" onClick={onOpen}>
+    <div
+      className="list-card lead-list-item"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+    >
       <div className="list-card-main">
         <div className="list-card-header">
           <strong>{lead.fullName}</strong>
@@ -32,7 +43,22 @@ export function LeadListItem({ lead, onOpen }) {
         {lead.isFirstContactOverdue ? <StatusBadge tone="danger">Alerta 24h</StatusBadge> : null}
         {!lead.isFirstContactOverdue && lead.isFollowUpOverdue ? <StatusBadge tone="warning">Seguimiento vencido</StatusBadge> : null}
         <span className="muted-caption">{lead.nextActionRelativeLabel}</span>
+
+        {canDelete ? (
+          <button
+            type="button"
+            className="danger-button small-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm('¿Eliminar este lead?')) {
+                onDelete(lead.id);
+              }
+            }}
+          >
+            Borrar
+          </button>
+        ) : null}
       </div>
-    </button>
+    </div>
   );
 }

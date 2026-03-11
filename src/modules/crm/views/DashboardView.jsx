@@ -24,6 +24,8 @@ export function DashboardView({
   onCreateLead,
   onImportCsv,
   onOpenLead,
+  onDeleteLead,
+  canDeleteLeads,
 }) {
   return (
     <div className="module-stack">
@@ -126,7 +128,13 @@ export function DashboardView({
           <div className="stack-list compact-list top-gap">
             {leads.length ? (
               leads.map((lead) => (
-                <LeadListItem key={lead.id} lead={lead} onOpen={() => onOpenLead(lead.id)} />
+                <LeadListItem
+                  key={lead.id}
+                  lead={lead}
+                  onOpen={() => onOpenLead(lead.id)}
+                  onDelete={onDeleteLead}
+                  canDelete={canDeleteLeads}
+                />
               ))
             ) : (
               <EmptyState title="Sin leads" copy="No hay resultados con los filtros actuales o aún no has creado/importado ninguno." />

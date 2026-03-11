@@ -171,6 +171,8 @@ export function LeadsCrmModule({ subPath, navigateWithinModule }) {
       draft={draft}
       setDraft={setDraft}
       onCreateLead={createLeadNow}
+      onDeleteLead={actions.crm.deleteLead}
+      canDeleteLeads={state.session.activeRoleId === 'founder'}
       onImportCsv={actions.crm.importCsv}
       onOpenLead={openLead}
     />

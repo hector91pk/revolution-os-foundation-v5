@@ -220,3 +220,13 @@ export function deriveInboxItemToPlanner(state, itemId) {
     },
   };
 }
+
+export function deleteInboxItem(state, itemId) {
+  return {
+    ...state,
+    inbox: {
+      ...state.inbox,
+      items: state.inbox.items.filter((item) => item.id !== itemId),
+    },
+  };
+}

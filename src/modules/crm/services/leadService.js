@@ -233,3 +233,12 @@ export function importLeadsFromCsv(state, text) {
     },
   };
 }
+export function deleteLead(state, leadId) {
+  return {
+    ...state,
+    crm: {
+      ...state.crm,
+      leads: state.crm.leads.filter((lead) => lead.id !== leadId),
+    },
+  };
+}

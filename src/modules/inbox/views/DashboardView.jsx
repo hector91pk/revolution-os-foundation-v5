@@ -20,6 +20,8 @@ export function DashboardView({
   setDraft,
   onCreateItem,
   onOpenItem,
+  onDeleteItem,
+  canDeleteItems,
 }) {
   return (
     <div className="module-stack">
@@ -114,7 +116,13 @@ export function DashboardView({
           <div className="stack-list compact-list top-gap">
             {items.length ? (
               items.map((item) => (
-                <InboxItemCard key={item.id} item={item} onOpen={() => onOpenItem(item.id)} />
+                <InboxItemCard
+                  key={item.id}
+                  item={item}
+                  onOpen={() => onOpenItem(item.id)}
+                  onDelete={onDeleteItem}
+                  canDelete={canDeleteItems}
+                />
               ))
             ) : (
               <EmptyState title="Inbox vacía" copy="No hay entradas con los filtros actuales." />

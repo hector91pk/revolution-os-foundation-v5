@@ -1,11 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import { loadAppState, resetAppState, saveAppState } from '../../core/persistence/repository';
+import {
+  connectAppRepository,
+  getRepositorySyncState,
+  loadAppState,
+  mergeRemoteStateIntoAppState,
+  resetAppState,
+  saveAppState,
+} from '../../core/persistence/repository';
 import { AppStoreContext } from './useAppStore';
 import { createAppActions } from './createAppActions';
 
 export function AppStoreProvider({ children }) {
   const [state, setState] = useState(() => loadAppState());
   const [lastSavedAt, setLastSavedAt] = useState(null);
+  const [syncState, setSyncState] = useState(() => getRepositorySyncState());
 
   const updateState = (producer) => {
     setState((current) => producer(current));
@@ -15,11 +23,24 @@ export function AppStoreProvider({ children }) {
     () =>
       createAppActions({
         updateState,
-        resetToSeed: () => setState(resetAppState()),
+        resetToSeed: () => setState((current) => resetAppState(current)),
         replaceState: (nextState) => setState(nextState),
       }),
     []
   );
+
+  useEffect(() => {
+    const disconnect = connectAppRepository({
+      onRemoteState(remoteModules) {
+        setState((current) => mergeRemoteStateIntoAppState(current, remoteModules));
+      },
+      onStatusChange(nextSyncState) {
+        setSyncState(nextSyncState);
+      },
+    });
+
+    return disconnect;
+  }, []);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -30,13 +51,20 @@ export function AppStoreProvider({ children }) {
     return () => window.clearTimeout(handle);
   }, [state]);
 
+  useEffect(() => {
+    if (syncState.mode === 'remote-ready') {
+      saveAppState(state);
+    }
+  }, [syncState.mode]);
+
   const value = useMemo(
     () => ({
       state,
       actions,
       lastSavedAt,
+      syncState,
     }),
-    [state, actions, lastSavedAt]
+    [state, actions, lastSavedAt, syncState]
   );
 
   return <AppStoreContext.Provider value={value}>{children}</AppStoreContext.Provider>;

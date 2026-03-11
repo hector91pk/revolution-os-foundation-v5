@@ -4,13 +4,21 @@ import { createPlannerItem, deletePlannerItem, togglePlannerItemStatus, updatePl
 import {
   addLeadContact,
   createLead,
+  deleteLead,
   importLeadsFromCsv,
   markLeadLost,
   markTrialCompleted,
   scheduleLeadTrial,
   updateLead,
 } from '../../modules/crm/services/leadService';
-import { createInboxItem, deriveInboxItemToLead, deriveInboxItemToPlanner, updateInboxItem } from '../../modules/inbox/services/inboxService';
+
+import {
+  createInboxItem,
+  deleteInboxItem,
+  deriveInboxItemToLead,
+  deriveInboxItemToPlanner,
+  updateInboxItem,
+} from '../../modules/inbox/services/inboxService';
 
 export function createAppActions({ updateState, resetToSeed, replaceState }) {
   return {
@@ -82,6 +90,9 @@ export function createAppActions({ updateState, resetToSeed, replaceState }) {
       importCsv(text) {
         updateState((state) => importLeadsFromCsv(state, text));
       },
+      deleteLead(leadId) {
+        updateState((state) => deleteLead(state, leadId));
+      },
     },
     inbox: {
       createItem(payload) {
@@ -95,6 +106,9 @@ export function createAppActions({ updateState, resetToSeed, replaceState }) {
       },
       deriveToPlanner(itemId) {
         updateState((state) => deriveInboxItemToPlanner(state, itemId));
+      },
+      deleteItem(itemId) {
+        updateState((state) => deleteInboxItem(state, itemId));
       },
     },
   };

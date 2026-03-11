@@ -128,6 +128,8 @@ export function InboxModule({ subPath, navigateWithinModule, navigateModule }) {
       setDraft={setDraft}
       onCreateItem={createItemNow}
       onOpenItem={openItem}
+      onDeleteItem={actions.inbox.deleteItem}
+      canDeleteItems={state.session.activeRoleId === 'founder'}
     />
   );
 }

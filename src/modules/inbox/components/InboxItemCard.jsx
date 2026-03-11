@@ -7,9 +7,20 @@ function toneForStatus(status) {
   return 'neutral';
 }
 
-export function InboxItemCard({ item, onOpen }) {
+export function InboxItemCard({ item, onOpen, onDelete, canDelete }) {
   return (
-    <button className="list-card inbox-item-card" onClick={onOpen}>
+    <div
+      className="list-card inbox-item-card"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+    >
       <div className="list-card-main">
         <div className="list-card-header">
           <strong>{item.senderName || item.subject || 'Entrada sin remitente'}</strong>
@@ -27,7 +38,22 @@ export function InboxItemCard({ item, onOpen }) {
         <span className="pill">{item.requestTypeLabel}</span>
         <span className="pill">{item.suggestedModuleLabel}</span>
         {item.derivedEntityType ? <StatusBadge tone="success">Derivado</StatusBadge> : null}
+
+        {canDelete ? (
+          <button
+            type="button"
+            className="danger-button small-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm('¿Eliminar esta entrada?')) {
+                onDelete(item.id);
+              }
+            }}
+          >
+            Borrar
+          </button>
+        ) : null}
       </div>
-    </button>
+    </div>
   );
 }

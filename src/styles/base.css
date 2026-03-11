@@ -11,6 +11,35 @@ body {
 }
 button, input, select, textarea {
   font: inherit;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 button { cursor: pointer; }
 a { color: inherit; }
+
+/* Fix dropdown oscuro */
+
+select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+/* Fix completo para selects en tema oscuro */
+
+select {
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+select option {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+input, textarea {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
