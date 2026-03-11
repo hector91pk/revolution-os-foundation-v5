@@ -8,10 +8,21 @@ function toneForItem(item) {
   return 'neutral';
 }
 
-export function PlannerItemCard({ item, onToggle, onDelete }) {
+export function PlannerItemCard({ item, onToggle, onDelete, onOpen }) {
   return (
     <div className="list-card planner-item-card">
-      <div className="list-card-main">
+      <div
+        className="list-card-main"
+        role="button"
+        tabIndex={0}
+        onClick={onOpen}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpen();
+          }
+        }}
+      >
         <div className="list-card-header">
           <strong>{item.title}</strong>
           <StatusBadge tone={toneForItem(item)}>{item.kind}</StatusBadge>
@@ -22,11 +33,12 @@ export function PlannerItemCard({ item, onToggle, onDelete }) {
           {item.centerId ? ` · ${item.centerId}` : ''}
         </small>
       </div>
+
       <div className="list-card-side">
-        <button className="ghost-button small-button" onClick={onToggle}>
+        <button type="button" className="ghost-button small-button" onClick={onToggle}>
           {item.status === 'hecha' ? 'Reabrir' : 'Hecha'}
         </button>
-        <button className="danger-button small-button" onClick={onDelete}>
+        <button type="button" className="danger-button small-button" onClick={onDelete}>
           Borrar
         </button>
       </div>

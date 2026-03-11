@@ -28,7 +28,7 @@ function buildDraft(defaultDate) {
   };
 }
 
-export function PlannerModule({ subPath, navigateWithinModule }) {
+export function PlannerModule({ subPath, navigateWithinModule, navigateModule }) {
   const { state, actions } = useAppStore();
   const route = useMemo(() => parsePlannerRoute(subPath), [subPath]);
   const [filters, setFilters] = useState({ search: '', centerId: 'all', status: 'all' });
@@ -66,6 +66,20 @@ export function PlannerModule({ subPath, navigateWithinModule }) {
     setDraft(buildDraft(route.dateKey));
   }
 
+  function openPlannerItem(item) {
+    if (item.linkedEntityType === 'lead' && item.linkedEntityId) {
+      navigateModule('leads-crm', `/lead/${encodeURIComponent(item.linkedEntityId)}`);
+      return;
+    }
+
+    if (item.linkedEntityType === 'inbox-item' && item.linkedEntityId) {
+      navigateModule('inbox', `/item/${encodeURIComponent(item.linkedEntityId)}`);
+      return;
+    }
+
+    navigateWithinModule(`/day/${item.dueDate || route.dateKey || todayKey()}`);
+  }
+
   return (
     <PlannerModuleView
       view={route.view}
@@ -83,6 +97,7 @@ export function PlannerModule({ subPath, navigateWithinModule }) {
       dayItems={dayItems}
       weekItems={weekItems}
       monthItems={monthItems}
+      onOpenItem={openPlannerItem}
       onToggleItem={actions.planner.toggleItemStatus}
       onDeleteItem={actions.planner.deleteItem}
     />

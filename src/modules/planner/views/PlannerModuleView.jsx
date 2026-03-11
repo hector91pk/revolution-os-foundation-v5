@@ -22,6 +22,7 @@ export function PlannerModuleView({
   dayItems,
   weekItems,
   monthItems,
+  onOpenItem,
   onToggleItem,
   onDeleteItem,
 }) {
@@ -61,11 +62,17 @@ export function PlannerModuleView({
         />
 
         {view === 'day' ? (
-          <DayViewSection dateKey={dateKey} items={dayItems} onToggle={onToggleItem} onDelete={onDeleteItem} />
+          <DayViewSection
+            dateKey={dateKey}
+            items={dayItems}
+            onOpen={onOpenItem}
+            onToggle={onToggleItem}
+            onDelete={onDeleteItem}
+          />
         ) : view === 'week' ? (
-          <WeekViewSection weeks={weekItems} />
+          <WeekViewSection weeks={weekItems} onOpenItem={onOpenItem} />
         ) : (
-          <MonthViewSection cells={monthItems} />
+          <MonthViewSection cells={monthItems} onOpenItem={onOpenItem} />
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { Panel } from '../../../shared/ui/Panel';
 import { formatWeekdayLabel } from '../../../shared/utils/date';
 
-export function WeekViewSection({ weeks }) {
+export function WeekViewSection({ weeks, onOpenItem }) {
   return (
     <div className="week-grid">
       {weeks.map((day) => (
@@ -12,7 +12,19 @@ export function WeekViewSection({ weeks }) {
           </div>
           <div className="mini-list top-gap">
             {day.items.map((item) => (
-              <div key={item.id} className="mini-list-item">
+              <div
+                key={item.id}
+                className="mini-list-item"
+                role="button"
+                tabIndex={0}
+                onClick={() => onOpenItem(item)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onOpenItem(item);
+                  }
+                }}
+              >
                 <strong>{item.title}</strong>
                 <small>{item.dueTime || item.kind}</small>
               </div>
