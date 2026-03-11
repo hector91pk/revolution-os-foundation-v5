@@ -77,6 +77,11 @@ export function PlannerModule({ subPath, navigateWithinModule, navigateModule })
       return;
     }
 
+    if (item.linkedEntityType === 'project' && item.linkedEntityId) {
+      navigateModule('control-center', `/project/${encodeURIComponent(item.linkedEntityId)}`);
+      return;
+    }
+
     navigateWithinModule(`/day/${item.dueDate || route.dateKey || todayKey()}`);
   }
 
