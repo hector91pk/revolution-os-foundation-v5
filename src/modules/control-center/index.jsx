@@ -17,7 +17,7 @@ function buildDraft(categoryId = '') {
   };
 }
 
-export function ControlCenterModule({ subPath, navigateWithinModule }) {
+export function ControlCenterModule({ subPath, navigateWithinModule, navigateModule }) {
   const { state, actions } = useAppStore();
   const route = useMemo(() => parseControlCenterRoute(subPath), [subPath]);
   const [search, setSearch] = useState('');
@@ -40,6 +40,10 @@ export function ControlCenterModule({ subPath, navigateWithinModule }) {
     [state.controlCenter.projects, staleAfterDays]
   );
 
+  function openPlannerTask(taskId) {
+    navigateModule('planner', `/item/${encodeURIComponent(taskId)}`);
+  }
+
   const sortedProjects = useMemo(() => sortProjects(state.controlCenter.projects), [state.controlCenter.projects]);
   const focusBuckets = useMemo(
     () => buildFocusBuckets(state.controlCenter.projects, staleAfterDays),
@@ -48,6 +52,24 @@ export function ControlCenterModule({ subPath, navigateWithinModule }) {
 
   const category = state.controlCenter.categories.find((item) => item.id === route.categoryId);
   const project = state.controlCenter.projects.find((item) => item.id === route.projectId);
+  
+  const linkedTasks = useMemo(() => {
+    if (!project) return [];
+
+    return [...state.planner.items]
+      .filter(
+        (item) =>
+          item.linkedEntityType === 'project' &&
+          item.linkedEntityId === project.id
+      )
+      .sort((a, b) => {
+        if (a.dueDate !== b.dueDate) {
+          return String(a.dueDate).localeCompare(String(b.dueDate));
+        }
+        return String(a.dueTime || '').localeCompare(String(b.dueTime || ''));
+      });
+  }, [state.planner.items, project]);
+  
   const categoryProjects = category
     ? sortProjects(filterProjects(state.controlCenter.projects.filter((item) => item.categoryId === category.id), { search, status }))
     : [];
@@ -123,6 +145,8 @@ export function ControlCenterModule({ subPath, navigateWithinModule }) {
       <ProjectView
         project={project}
         categories={state.controlCenter.categories}
+        linkedTasks={linkedTasks}
+        onOpenTask={openPlannerTask}
         onBack={() => navigateWithinModule(`/category/${encodeURIComponent(project.categoryId)}`)}
         onChange={(field, value) => actions.controlCenter.updateProject(project.id, { [field]: value })}
         onDelete={() => {
