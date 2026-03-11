@@ -1,0 +1,20 @@
+.category-card,
+.focus-bucket,
+.strategy-cluster {
+  display: grid;
+  gap: 14px;
+}
+.map-node {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  color: inherit;
+  padding: 14px;
+  text-align: left;
+}
+.strategy-map-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.node-stack {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}

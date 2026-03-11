@@ -1,0 +1,4 @@
+.lead-list-item,
+.center-metric-card {
+  align-items: flex-start;
+}

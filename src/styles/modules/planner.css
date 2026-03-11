@@ -1,0 +1,27 @@
+.week-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.week-column,
+.month-cell {
+  min-height: 180px;
+}
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+}
+.is-muted-month {
+  opacity: 0.55;
+}
+.mini-list-item {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+}
+@media (max-width: 1200px) {
+  .week-grid,
+  .month-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,19 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --bg-elevated: #12192d;
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --text: #f4f7fb;
+  --muted: #9aa7bf;
+  --primary: #68b3ff;
+  --success: #43d08a;
+  --warning: #ffbf4d;
+  --danger: #ff6f6f;
+  --info: #a783ff;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --max-width: 1700px;
+}
