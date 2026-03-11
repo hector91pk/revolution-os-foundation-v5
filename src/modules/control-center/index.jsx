@@ -44,6 +44,23 @@ export function ControlCenterModule({ subPath, navigateWithinModule, navigateMod
     navigateModule('planner', `/item/${encodeURIComponent(taskId)}`);
   }
 
+  function createProjectTask(payload) {
+    if (!project || !payload.title.trim()) return;
+
+    actions.planner.createItem({
+      title: payload.title.trim(),
+      description: payload.description?.trim() || '',
+      kind: 'task',
+      priority: payload.priority || 'media',
+      dueDate: payload.dueDate || '',
+      dueTime: payload.dueTime || '',
+      centerId: '',
+      linkedEntityType: 'project',
+      linkedEntityId: project.id,
+      sourceModule: 'control-center',
+    });
+  }
+
   const sortedProjects = useMemo(() => sortProjects(state.controlCenter.projects), [state.controlCenter.projects]);
   const focusBuckets = useMemo(
     () => buildFocusBuckets(state.controlCenter.projects, staleAfterDays),
@@ -147,6 +164,7 @@ export function ControlCenterModule({ subPath, navigateWithinModule, navigateMod
         categories={state.controlCenter.categories}
         linkedTasks={linkedTasks}
         onOpenTask={openPlannerTask}
+        onCreateTask={createProjectTask}
         onBack={() => navigateWithinModule(`/category/${encodeURIComponent(project.categoryId)}`)}
         onChange={(field, value) => actions.controlCenter.updateProject(project.id, { [field]: value })}
         onDelete={() => {

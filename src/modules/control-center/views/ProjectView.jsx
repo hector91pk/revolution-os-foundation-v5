@@ -8,6 +8,7 @@ export function ProjectView({
   categories,
   linkedTasks,
   onOpenTask,
+  onCreateTask,
   onBack,
   onChange,
   onDelete,
@@ -25,7 +26,11 @@ export function ProjectView({
         <ProjectForm project={project} categories={categories} onChange={onChange} onDelete={onDelete} />
       </Panel>
 
-      <ProjectTasksPanel tasks={linkedTasks} onOpenTask={onOpenTask} />
+      <ProjectTasksPanel
+        tasks={linkedTasks}
+        onOpenTask={onOpenTask}
+        onCreateTask={onCreateTask}
+      />
     </div>
   );
 }
