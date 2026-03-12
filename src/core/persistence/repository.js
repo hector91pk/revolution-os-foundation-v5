@@ -86,6 +86,7 @@ export function resetAppState(currentState = null) {
     clean.crm = deepClone(currentState.crm ?? clean.crm);
     clean.planner = deepClone(currentState.planner ?? clean.planner);
     clean.inbox = deepClone(currentState.inbox ?? clean.inbox);
+    clean.controlCenter = deepClone(currentState.controlCenter ?? clean.controlCenter);
   }
 
   saveAppState(clean);

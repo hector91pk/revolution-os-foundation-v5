@@ -23,7 +23,6 @@ export function AppShell({
   onRoleChange,
   onNavigateModule,
   onExport,
-  onReset,
   children,
 }) {
   return (
@@ -85,7 +84,6 @@ export function AppShell({
 
         <div className="sidebar-actions">
           <button className="ghost-button" onClick={onExport}>Exportar JSON</button>
-          <button className="danger-button" onClick={onReset}>Restaurar seed</button>
         </div>
       </aside>
 

@@ -17,16 +17,27 @@ export function sortPlannerItems(items) {
   });
 }
 
-export function filterPlannerItems(items, { search = '', centerId = 'all', status = 'all' } = {}) {
+export function filterPlannerItems(
+  items,
+  { search = '', centerId = 'all', status = 'all', projectId = 'all' } = {}
+) {
   const normalizedSearch = search.trim().toLowerCase();
 
   return items.filter((item) => {
     const matchesSearch =
       !normalizedSearch ||
-      [item.title, item.description, item.centerId, item.kind].join(' ').toLowerCase().includes(normalizedSearch);
+      [item.title, item.description, item.centerId, item.kind]
+        .join(' ')
+        .toLowerCase()
+        .includes(normalizedSearch);
+
     const matchesCenter = centerId === 'all' || item.centerId === centerId;
     const matchesStatus = status === 'all' || item.status === status;
-    return matchesSearch && matchesCenter && matchesStatus;
+    const matchesProject =
+      projectId === 'all' ||
+      (item.linkedEntityType === 'project' && item.linkedEntityId === projectId);
+
+    return matchesSearch && matchesCenter && matchesStatus && matchesProject;
   });
 }
 

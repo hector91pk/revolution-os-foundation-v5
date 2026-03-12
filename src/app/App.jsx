@@ -98,7 +98,7 @@ export default function App() {
       }}
       onNavigateModule={navigateModule}
       onExport={exportData}
-      onReset={resetData}
+      
     >
       <ActiveModuleComponent subPath={activeSubPath} navigateWithinModule={navigateWithinModule} navigateModule={navigateModule} />
     </AppShell>

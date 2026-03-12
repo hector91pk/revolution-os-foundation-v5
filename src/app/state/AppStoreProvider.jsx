@@ -9,11 +9,15 @@ import {
 } from '../../core/persistence/repository';
 import { AppStoreContext } from './useAppStore';
 import { createAppActions } from './createAppActions';
+import { subscribeToAuthState } from '../../integrations/firebase/auth';
 
 export function AppStoreProvider({ children }) {
   const [state, setState] = useState(() => loadAppState());
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const [syncState, setSyncState] = useState(() => getRepositorySyncState());
+
+  const [authReady, setAuthReady] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const updateState = (producer) => {
     setState((current) => producer(current));
@@ -30,6 +34,19 @@ export function AppStoreProvider({ children }) {
   );
 
   useEffect(() => {
+    const unsubscribe = subscribeToAuthState((user) => {
+      setCurrentUser(user);
+      setAuthReady(true);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!authReady || !currentUser) {
+      return undefined;
+    }
+
     const disconnect = connectAppRepository({
       onRemoteState(remoteModules) {
         setState((current) => mergeRemoteStateIntoAppState(current, remoteModules));
@@ -40,7 +57,7 @@ export function AppStoreProvider({ children }) {
     });
 
     return disconnect;
-  }, []);
+  }, [authReady, currentUser]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -63,8 +80,10 @@ export function AppStoreProvider({ children }) {
       actions,
       lastSavedAt,
       syncState,
+      authReady,
+      currentUser,
     }),
-    [state, actions, lastSavedAt, syncState]
+    [state, actions, lastSavedAt, syncState, authReady, currentUser]
   );
 
   return <AppStoreContext.Provider value={value}>{children}</AppStoreContext.Provider>;

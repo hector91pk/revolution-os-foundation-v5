@@ -1,4 +1,4 @@
-export const REMOTE_SHARED_MODULE_IDS = ['crm', 'planner', 'inbox'];
+export const REMOTE_SHARED_MODULE_IDS = ['crm', 'planner', 'inbox', 'controlCenter'];
 
 export function getRemoteModuleSlice(state, moduleId) {
   switch (moduleId) {
@@ -8,6 +8,8 @@ export function getRemoteModuleSlice(state, moduleId) {
       return state.planner;
     case 'inbox':
       return state.inbox;
+    case 'controlCenter':
+      return state.controlCenter;
     default:
       return null;
   }

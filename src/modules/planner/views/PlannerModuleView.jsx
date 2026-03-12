@@ -13,6 +13,7 @@ export function PlannerModuleView({
   filters,
   setFilters,
   centers,
+  projects,
   linkedEntities,
   draft,
   setDraft,
@@ -50,6 +51,7 @@ export function PlannerModuleView({
         filters={filters}
         setFilters={setFilters}
         centers={centers}
+        projects={projects}
       />
 
       <div className="split-grid align-start">

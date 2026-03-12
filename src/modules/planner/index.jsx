@@ -32,7 +32,12 @@ function buildDraft(defaultDate) {
 export function PlannerModule({ subPath, navigateWithinModule, navigateModule }) {
   const { state, actions } = useAppStore();
   const route = useMemo(() => parsePlannerRoute(subPath), [subPath]);
-  const [filters, setFilters] = useState({ search: '', centerId: 'all', status: 'all' });
+  const [filters, setFilters] = useState({
+    search: '',
+    centerId: 'all',
+    status: 'all',
+    projectId: 'all',
+  });
   const [draft, setDraft] = useState(() => buildDraft(route.dateKey || todayKey()));
 
   const filteredItems = useMemo(
@@ -144,6 +149,7 @@ export function PlannerModule({ subPath, navigateWithinModule, navigateModule })
       filters={filters}
       setFilters={setFilters}
       centers={state.shared.centers}
+      projects={state.controlCenter.projects}
       linkedEntities={linkedEntities}
       draft={draft}
       setDraft={setDraft}
